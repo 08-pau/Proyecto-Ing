@@ -1,0 +1,176 @@
+/* Estilos generales */
+body {
+  font-family: Arial, sans-serif;
+}
+/* Estilos generales para el componente de producto */
+.main-content {
+    padding: 20px;
+  }
+  
+  .search-bar-container {
+    margin-bottom: 20px;
+  }
+ /* Estilo para el fondo del modal */
+.promo-modal-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5); /* Fondo oscuro */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999; /* Asegura que el modal esté por encima de otros elementos */
+}
+
+/* Estilo para el contenido del modal */
+.promo-modal {
+  background-color: white;
+  padding: 20px;
+  border-radius: 8px;
+  max-width: 600px;
+  width: 100%;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+  
+  .btn {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-right: 10px;
+  }
+  
+  .btn-search {
+    background-color: #87CEEB; /* Celeste */
+    color: white;
+  }
+  
+  .btn-add {
+    background-color: #32CD32; /* Verde */
+    color: white;
+  }
+  
+  .btn-edit {
+    background-color: #FFA500; /* Naranja */
+    color: white;
+  }
+  
+  .btn-delete {
+    background-color: #FF6347; /* Tomate */
+    color: white;
+  }
+  
+  .productos-table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+  
+  .productos-table th, .productos-table td {
+    border: 1px solid #ddd;
+    padding: 8px;
+  }
+  
+  .table-img {
+    max-width: 100px;
+    height: auto;
+  }
+  
+  
+.Modal {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: white;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+    z-index: 1000;
+    width: 500px;
+    max-width: 100%;
+  }
+  
+  .Modal h2 {
+    margin-top: 0;
+  }
+  
+  .Modal form {
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .Modal form input, .Modal form textarea {
+    margin-bottom: 10px;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+  }
+  
+  .Modal form button {
+    padding: 10px;
+    border: none;
+    border-radius: 5px;
+    background-color: #007bff;
+    color: white;
+    cursor: pointer;
+    margin-top: 10px;
+  }
+  
+  .Modal form button[type="button"] {
+    background-color: #6c757d;
+  }
+  
+  .Modal form button:hover {
+    opacity: 0.9;
+  }
+  .modal-content {
+    background-color: white;
+    padding: 20px;
+    border-radius: 5px;
+    width: 50%;
+    max-width: 500px;
+    position: relative;
+  }
+  
+  .close {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    font-size: 20px;
+    cursor: pointer;
+  }
+  
+  form label {
+    display: block;
+    margin-bottom: 5px;
+  }
+  
+  form input, form select {
+    width: 100%;
+    padding: 8px;
+    margin-bottom: 10px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+  }
+  
+  form button {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-right: 10px;
+  }
+  
+  form button[type="submit"] {
+    background-color: #32CD32; /* Verde */
+    color: white;
+  }
+  
+  form button[type="button"] {
+    background-color: #FF6347; /* Tomate */
+    color: white;
+  }
+  

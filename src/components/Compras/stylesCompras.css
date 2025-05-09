@@ -1,0 +1,354 @@
+/* Estilos generales */
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f0f0f0;
+}
+
+.container {
+    display: flex;
+}
+
+.main-content {
+    flex: 1;
+    padding: 20px;
+}
+
+/* Estilos para PurchaseList */
+#purchase-list {
+    background-color: white;
+    padding: 20px;
+    margin-bottom: 20px;
+}
+
+#purchase-list h1 {
+    margin-bottom: 20px;
+    font-size: 1.5rem;
+}
+
+.add-purchase {
+    background-color: #007bff;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    margin-bottom: 10px;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.add-purchase:hover {
+    background-color: #0056b3;
+}
+
+.search-bar {
+    padding: 8px;
+    margin-right: 10px;
+}
+
+.search-button {
+    background-color: #28a745;
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.search-button:hover {
+    background-color: #218838;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+
+table th,
+table td {
+    padding: 12px;
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+}
+
+.detail-button,
+.cancel-button,
+.download-button {
+    background-color: #007bff;
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.detail-button:hover,
+.cancel-button:hover,
+.download-button:hover {
+    background-color: #0056b3;
+}
+.form-group span {
+  display: block;
+  padding: 12px;
+  border: 1px solid #ccc; /* Un borde para diferenciarlos */
+  border-radius: 5px;
+  background-color: #f9f9f9; /* Un fondo ligero */
+  margin-top: 5px;
+}
+
+.status {
+    padding: 8px 12px;
+    border-radius: 4px;
+    font-weight: bold;
+    text-align: center;
+}
+
+.status.registered {
+    background-color: #28a745;
+    color: white;
+}
+
+/* Estilos para AddPurchaseForm */
+#add-purchase-form {
+    background-color: white;
+    padding: 20px;
+    margin-bottom: 20px;
+}
+
+#add-purchase-form h1 {
+    margin-bottom: 20px;
+    font-size: 1.5rem;
+}
+
+#add-purchase-form p {
+    font-size: 0.875rem;
+    color: #6c757d;
+}
+
+#add-purchase-form form {
+    margin-bottom: 20px;
+}
+
+#add-purchase-form label {
+    font-weight: bold;
+    display: block;
+    margin-bottom: 5px;
+}
+
+#add-purchase-form input,
+#add-purchase-form select {
+    width: 100%;
+    padding: 12px; /* Aumentar el padding */
+    margin-bottom: 10px;
+    border: 1px solid #ced4da;
+    border-radius: 4px;
+    box-sizing: border-box;
+}
+
+#add-purchase-form .add-detail {
+    background-color: #007bff;
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+#add-purchase-form .add-detail:hover {
+    background-color: #0056b3;
+}
+
+#add-purchase-form table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+
+#add-purchase-form table th,
+#add-purchase-form table td {
+    padding: 12px;
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+}
+
+#add-purchase-form tfoot td {
+    font-weight: bold;
+}
+
+#add-purchase-form .save-button {
+    background-color: #28a745;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    margin-top: 10px;
+}
+
+#add-purchase-form .save-button:hover {
+    background-color: #218838;
+}
+
+/* Estilos para PurchaseDetail */
+#purchase-detail {
+    background-color: white;
+    padding: 20px;
+    margin-bottom: 20px;
+}
+
+#purchase-detail h1 {
+    margin-bottom: 20px;
+    font-size: 1.5rem;
+}
+
+#purchase-detail .close-button {
+    background-color: #dc3545;
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    margin-bottom: 20px;
+}
+
+#purchase-detail .close-button:hover {
+    background-color: #c82333;
+}
+
+#purchase-detail table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+
+#purchase-detail table th,
+#purchase-detail table td {
+    padding: 12px;
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+}
+
+#purchase-detail tfoot td {
+    font-weight: bold;
+}
+
+/* Estilos del Modal */
+.modal {
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto; /* Permitir desplazamiento si el contenido es demasiado largo */
+    background-color: rgba(0, 0, 0, 0.5); /* Fondo semitransparente */
+}
+
+.modal-content {
+    background-color: white;
+    margin: 10% auto; /* Centrar el modal */
+    padding: 40px; /* Aumentar el padding para mayor espacio */
+    border: 1px solid #888;
+    border-radius: 8px; /* Bordes redondeados */
+    width: 90%; /* Aumentar el ancho del modal */
+    max-width: 800px; /* Ancho máximo */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Sombra */
+}
+
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.modal-header h2 {
+    margin: 0;
+    font-size: 1.8rem; /* Aumentar tamaño del título del modal */
+}
+
+.close {
+    cursor: pointer;
+    font-size: 1.5rem; /* Tamaño del botón de cerrar */
+    color: #dc3545; /* Color rojo */
+}
+
+/* Estilos del formulario */
+form {
+    display: flex;
+    flex-direction: column;
+}
+
+label {
+    margin-top: 15px; /* Espaciado entre las etiquetas */
+    font-weight: bold;
+}
+
+input,
+select {
+    padding: 12px; /* Aumentar el padding de los inputs */
+    margin-top: 5px; /* Espaciado superior */
+    border: 1px solid #ced4da;
+    border-radius: 4px;
+    box-sizing: border-box;
+}
+
+button {
+    margin-top: 20px; /* Espacio entre los botones */
+}
+
+/* Estilos de la tabla */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+
+table th,
+table td {
+    padding: 12px; /* Aumentar padding en las celdas de la tabla */
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+}
+
+tfoot td {
+    font-weight: bold;
+}
+
+/* Estilos para el pie de la tabla de totales */
+tfoot {
+    background-color: #f9f9f9; /* Fondo claro para el pie de la tabla */
+    font-weight: normal; /* Peso de la fuente normal */
+  }
+  
+  .totals-row {
+    border-top: 1px solid #ccc; /* Línea superior para separación visual */
+  }
+  
+  .label {
+    text-align: right; /* Alinear el texto a la derecha en las celdas de totales */
+    padding: 10px; /* Espaciado interno */
+  }
+  
+  .amount {
+    text-align: right; /* Alinear el texto de los montos a la derecha */
+    padding: 10px; /* Espaciado interno */
+    color: #333; /* Color estándar para los montos */
+  }
+  
+  .total {
+    font-weight: bold; /* Resaltar el total a pagar */
+    background-color: #e9ecef; /* Fondo gris claro para la fila total */
+  }
+  
+  .total-amount {
+    color: #d9534f; /* Color rojo para el total a pagar */
+    font-size: 1.2em; /* Aumentar el tamaño de fuente para mayor énfasis */
+  }
+  
