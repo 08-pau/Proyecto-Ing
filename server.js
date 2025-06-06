@@ -92,23 +92,54 @@ app.put('/api/roles/:id/status', (req, res) => {
     }
   });
 });
+app.put('/api/ventas/estado/:idVenta', (req, res) => {
+  const idVenta = req.params.idVenta;
+  const { estado } = req.body; // 1 = procesar, 0 = anular
 
-// Ruta para actualizar el estado de un usuario (activo/inactivo)
-// Ruta para actualizar el estado de un usuario (activo/inactivo)
-app.put('/api/usuarios/estado/:id', (req, res) => {
-  const { activo } = req.body; // Debes enviar el estado activo (0 o 1)
-  const { id } = req.params;
-
-  const query = 'UPDATE usuarios SET activo = ? WHERE ID_Usuario = ?';
-  
-  db.query(query, [activo, id], (err, result) => {
+  // Cambiar el estado de la venta
+  const updateVentaQuery = `UPDATE ventas SET estado = ? WHERE ID_Venta = ?`;
+  db.query(updateVentaQuery, [estado, idVenta], (err, result) => {
     if (err) {
-      console.error('Error updating user status:', err);
-      return res.status(500).send('Error updating user status');
+      console.error('Error al actualizar el estado de la venta:', err);
+      return res.status(500).json({ message: 'Error al actualizar el estado de la venta.' });
     }
-    res.status(200).send('User status updated successfully');
+
+    // Obtener detalles de la venta
+    const selectDetallesQuery = `SELECT ID_Producto, Cantidad FROM detalles_venta WHERE ID_Venta = ?`;
+    db.query(selectDetallesQuery, [idVenta], (errDetalles, detalles) => {
+      if (errDetalles) {
+        console.error('Error al obtener los detalles de la venta:', errDetalles);
+        return res.status(500).json({ message: 'Estado actualizado pero error al obtener detalles.' });
+      }
+
+      // Armar todas las consultas para actualizar el stock
+      const stockQueries = detalles.map(({ ID_Producto, Cantidad }) => {
+        const operacion = estado === 1 ? '-' : '+'; // restar si se procesa, sumar si se anula
+        return new Promise((resolve, reject) => {
+          const query = `UPDATE productos SET Stock = Stock ${operacion} ? WHERE ID_Producto = ?`;
+          db.query(query, [Cantidad, ID_Producto], (errUpdate) => {
+            if (errUpdate) {
+              reject(errUpdate);
+            } else {
+              resolve();
+            }
+          });
+        });
+      });
+
+      // Ejecutar todas las actualizaciones de stock
+      Promise.all(stockQueries)
+        .then(() => {
+          res.status(200).json({ message: `Venta ${estado === 1 ? 'procesada' : 'anulada'} y stock actualizado.` });
+        })
+        .catch((errStock) => {
+          console.error('Error actualizando el stock:', errStock);
+          res.status(500).json({ message: 'Estado actualizado pero error al actualizar el stock.' });
+        });
+    });
   });
 });
+
 
 
 
@@ -128,15 +159,18 @@ app.delete('/api/roles/:id', (req, res) => {
 // Obtener roles usando sólo callbacks, sin promesas
 // Ruta para obtener todos los roles
 app.get('/api/obtenerRoles', (req, res) => {
-  db.query('SELECT id, nombreRol FROM roles', (err, results) => {
+  const sql = 'SELECT id, nombreRol FROM roles WHERE activo = 1';
+
+  db.query(sql, (err, results) => {
     if (err) {
-      console.error('Error al recuperar roles:', err);
+      console.error('Error al recuperar roles activos:', err);
       return res.status(500).json({ error: 'Error al recuperar roles' });
     }
-    // Retornamos los resultados obtenidos de la consulta
-    res.json(results);
+    res.json(results); // ✅ Solo devuelve roles activos
   });
 });
+
+
 
 // Ruta para obtener todos los impuestos
 app.get('/api/obtenerImpuestos', (req, res) => {
@@ -374,102 +408,137 @@ app.post('/api/categorias', (req, res) => {
       res.status(201).json({ message: 'Category added successfully' });
   });
 });
-// Ruta para agregar una compra
+
+app.post('/api/verificarCorreo', (req, res) => {
+  const { email } = req.body;
+
+  if (!email || typeof email !== 'string') {
+    return res.status(400).json({ error: 'Correo inválido' });
+  }
+
+  const correoLimpio = email.trim().toLowerCase();
+
+  db.query(
+    'SELECT ID_Usuario FROM usuarios WHERE LOWER(TRIM(Email)) = ?',
+    [correoLimpio],
+    (err, results) => {
+      if (err) {
+        console.error('Error verificando correo:', err);
+        return res.status(500).json({ error: 'Error del servidor' });
+      }
+
+      if (results.length === 0) {
+        return res.status(404).json({ error: 'Correo no registrado' });
+      }
+
+      res.json({ success: true, userId: results[0].ID_Usuario });
+    }
+  );
+});
+
+
+app.post('/api/cambiarClave', (req, res) => {
+  const { userId, nuevaClave } = req.body;
+
+  db.query('UPDATE usuarios SET Clave = ? WHERE ID_Usuario = ?', [nuevaClave, userId], (err, result) => {
+    if (err) {
+      console.error('Error actualizando clave:', err);
+      return res.status(500).json({ error: 'Error del servidor' });
+    }
+
+    res.json({ success: true, message: 'Contraseña actualizada correctamente' });
+  });
+});
+
 app.post('/api/compras', (req, res) => {
   const {
     ID_Proveedor,
-    nombre_producto,
+    ID_Producto,
     cantidad_comprada,
     precio_unitario,
     subtotal,
     impuesto,
     total_final,
-    fecha_compra,
+    fecha_compra
   } = req.body;
 
-  // Validar campos requeridos
   if (
     !ID_Proveedor ||
-    !nombre_producto ||
-    !cantidad_comprada ||
-    !precio_unitario ||
+    !ID_Producto ||
+    isNaN(Number(cantidad_comprada)) ||
+    isNaN(Number(precio_unitario)) ||
     !subtotal ||
     !impuesto ||
     !total_final ||
     !fecha_compra
   ) {
-    return res.status(400).json({ error: 'Todos los campos son requeridos.' });
+    return res.status(400).json({ error: 'Todos los campos son requeridos y válidos.' });
   }
 
-  // Inicia una transacción
-  db.beginTransaction((err) => {
-    if (err) {
-      console.error('Error al iniciar la transacción:', err);
-      return res.status(500).json({ error: 'Error al iniciar la transacción.' });
-    }
+  const cantidad = parseInt(cantidad_comprada, 10);
 
-    // Query para agregar la compra
+  db.beginTransaction((err) => {
+    if (err) return res.status(500).json({ error: 'Error al iniciar transacción.' });
+
     const queryCompra = `
-      INSERT INTO compras (ID_Proveedor, nombre_producto, cantidad_comprada, precio_unitario, subtotal, impuesto, total_final, fecha_compra)
+      INSERT INTO compras 
+      (ID_Proveedor, ID_Producto, cantidad_comprada, precio_unitario, subtotal, impuesto, total_final, fecha_compra)
       VALUES (?, ?, ?, ?, ?, ?, ?, ?)
     `;
+
     const valoresCompra = [
-      ID_Proveedor,
-      nombre_producto,
-      cantidad_comprada,
-      precio_unitario,
-      subtotal,
-      impuesto,
-      total_final,
-      fecha_compra,
+      ID_Proveedor, ID_Producto, cantidad,
+      precio_unitario, subtotal, impuesto, total_final, fecha_compra
     ];
 
-    db.query(queryCompra, valoresCompra, (err, resultadoCompra) => {
+    db.query(queryCompra, valoresCompra, (err) => {
       if (err) {
-        console.error('Error al agregar la compra:', err);
-        return db.rollback(() => {
-          res.status(500).json({ error: 'Error al agregar la compra.' });
-        });
+        return db.rollback(() => res.status(500).json({ error: 'Error al registrar la compra.' }));
       }
 
-      // Calcular el total para la salida
-      const totalSalida = cantidad_comprada * precio_unitario;
-
-      // Query para agregar la salida
-      const querySalida = `
-        INSERT INTO salidas (Cantidad, TipoSalida, FechaSalida, Total)
-        VALUES (?, ?, ?, ?)
+      const queryActualizarStock = `
+        UPDATE productos SET Stock = Stock + ? WHERE ID_Producto = ?
       `;
-      const valoresSalida = [
-        cantidad_comprada, // Cantidad comprada
-        'compra', // Tipo de salida
-        fecha_compra, // Fecha de la compra
-        totalSalida, // Total calculado
-      ];
 
-      db.query(querySalida, valoresSalida, (err) => {
+      db.query(queryActualizarStock, [cantidad, ID_Producto], (err) => {
         if (err) {
-          console.error('Error al registrar la salida:', err);
-          return db.rollback(() => {
-            res.status(500).json({ error: 'Error al registrar la salida.' });
-          });
+          return db.rollback(() => res.status(500).json({ error: 'Error al actualizar stock.' }));
         }
 
-        // Finaliza la transacción
-        db.commit((err) => {
+        // 👉 INSERT en tabla ENTRADAS con motivo 'compra'
+        const totalEntrada = cantidad * precio_unitario;
+        const queryEntrada = `
+          INSERT INTO entradas 
+          (ID_Producto, Cantidad, PrecioUnitario, Total, Motivo, FechaEntrada)
+          VALUES (?, ?, ?, ?, ?, ?)
+        `;
+
+        db.query(queryEntrada, [
+          ID_Producto,
+          cantidad,
+          precio_unitario,
+          totalEntrada,
+          'compra',
+          fecha_compra
+        ], (err) => {
           if (err) {
-            console.error('Error al finalizar la transacción:', err);
-            return db.rollback(() => {
-              res.status(500).json({ error: 'Error al finalizar la transacción.' });
-            });
+            return db.rollback(() => res.status(500).json({ error: 'Error al registrar entrada.' }));
           }
 
-          res.status(201).json({ mensaje: 'Compra y salida registradas exitosamente.' });
+          db.commit((err) => {
+            if (err) {
+              return db.rollback(() => res.status(500).json({ error: 'Error al finalizar transacción.' }));
+            }
+
+            res.status(201).json({ mensaje: 'Compra, entrada y stock registrados correctamente.' });
+          });
         });
       });
     });
   });
 });
+
+
 
 
 // Ruta para obtener todas las categorías
@@ -602,7 +671,25 @@ app.post('/api/clientes', (req, res) => {
   });
 
   app.post('/api/detalles-venta', async (req, res) => {
-    const {
+  const {
+    idVenta,
+    idProducto,
+    cantidad,
+    precioUnitario,
+    subtotal,
+    total,
+    impuesto,
+    tipoPromocion,
+    descripcionPromocion
+  } = req.body;
+
+  try {
+    const query = `
+      INSERT INTO detalles_venta
+      (ID_Venta, ID_Producto, Cantidad, Precio, Subtotal, Total, Impuesto, TipoPromocion, DescripcionPromocion)
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+    `;
+    const values = [
       idVenta,
       idProducto,
       cantidad,
@@ -610,44 +697,48 @@ app.post('/api/clientes', (req, res) => {
       subtotal,
       total,
       impuesto,
-      tipoPromocion,
-      descripcionPromocion
-    } = req.body;
-  
-    try {
-      const query = `
-        INSERT INTO detalles_venta
-        (ID_Venta, ID_Producto, Cantidad, Precio, Subtotal, Total, Impuesto, TipoPromocion, DescripcionPromocion)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+      tipoPromocion || null,
+      descripcionPromocion || null
+    ];
+
+    db.query(query, values, (error, results) => {
+      if (error) {
+        console.error('Error al guardar los detalles de la venta:', error);
+        return res.status(500).json({ message: 'Error al guardar los detalles de la venta.' });
+      }
+
+      // Ahora registrar automáticamente la salida con motivo "venta"
+      const salidaQuery = `
+        INSERT INTO salidas (ID_Producto, Cantidad, TipoSalida, FechaSalida, PrecioUnitario, Total)
+        VALUES (?, ?, ?, ?, ?, ?)
       `;
-      const values = [
-        idVenta,
+      const salidaValues = [
         idProducto,
         cantidad,
+        'venta',
+        new Date(),
         precioUnitario,
-        subtotal,
-        total,
-        impuesto,
-        tipoPromocion || null,
-        descripcionPromocion || null
+        (cantidad * precioUnitario).toFixed(2)
       ];
-  
-      db.query(query, values, (error, results) => {
-        if (error) {
-          console.error('Error al guardar los detalles de la venta:', error);
-          return res.status(500).json({ message: 'Error al guardar los detalles de la venta.' });
+
+      db.query(salidaQuery, salidaValues, (errSalida) => {
+        if (errSalida) {
+          console.error('Error al registrar la salida:', errSalida);
+          return res.status(500).json({ message: 'Detalle guardado, pero error al registrar salida.' });
         }
+
         res.status(201).json({
-          message: 'Detalles de venta guardados exitosamente.',
+          message: 'Detalle de venta y salida registrados exitosamente.',
           idDetalleVenta: results.insertId
         });
       });
-    } catch (error) {
-      console.error('Error en la solicitud:', error);
-      res.status(500).json({ message: 'Error al procesar la solicitud.' });
-    }
-  });
-  
+    });
+  } catch (error) {
+    console.error('Error en la solicitud:', error);
+    res.status(500).json({ message: 'Error al procesar la solicitud.' });
+  }
+});
+
   
   app.put('/api/clientes/:id', (req, res) => {
     const id = req.params.id;
@@ -1021,29 +1112,70 @@ app.get('/api/obtenerMetodosPago', (req, res) => {
     res.json(results);
   });
 });
-// Tu ruta para agregar una venta
+// POST /api/ventas
 app.post('/api/ventas', (req, res) => {
-  const { idCliente, idUsuario, idMetodoPago, fecha, numero } = req.body;
+  const { idCliente, idUsuario, idMetodoPago, fecha } = req.body;
 
-  // Validación básica
-  if (!idCliente || !idUsuario || !idMetodoPago || !fecha || !numero) {
-    return res.status(400).json({ message: 'Todos los campos son obligatorios.' });
-  }
-
-  // Consulta SQL para insertar la venta
-  const query = 'INSERT INTO ventas (Fecha, Numero, ID_Cliente, ID_Usuario, ID_Metodo_Pago) VALUES (?, ?, ?, ?, ?)';
-  const values = [fecha, numero, idCliente, idUsuario, idMetodoPago];
-
-  db.query(query, values, (err, result) => {
+  // Obtener el último número de venta
+  db.query('SELECT MAX(Numero) AS maxNumero FROM ventas', (err, results) => {
     if (err) {
-      console.error('Error inserting sale:', err);
-      return res.status(500).json({ message: 'Error al guardar la venta.' });
+      console.error('Error al obtener el último número de venta:', err);
+      return res.status(500).json({ error: 'Error al obtener el último número de venta' });
     }
-    
-    // Si la inserción es exitosa
-    res.status(201).json({ message: 'Venta guardada exitosamente.', idVenta: result.insertId });
+
+    const numero = ((results[0].maxNumero || 0) * 1) + 1; // Multiplica por 1 para asegurarse de que sea numérico
+
+    // Insertar la venta
+    const insertQuery = `
+      INSERT INTO ventas (ID_Cliente, ID_Usuario, ID_Metodo_Pago, Fecha, Numero)
+      VALUES (?, ?, ?, ?, ?)
+    `;
+
+    db.query(
+      insertQuery,
+      [idCliente, idUsuario, idMetodoPago, fecha, numero.toString()],
+      (err, resultado) => {
+        if (err) {
+          console.error('Error al crear venta:', err);
+          return res.status(500).json({ error: 'Error al crear la venta' });
+        }
+
+        res.status(201).json({
+          idVenta: resultado.insertId,
+          numero: numero,
+        });
+      }
+    );
   });
 });
+app.put('/api/ventas/:idVenta/estado', (req, res) => {
+  const { idVenta } = req.params;
+  const { estado_venta } = req.body;
+
+  console.log(`Actualizando venta con ID ${idVenta} a estado ${estado_venta}`);  // Log para verificar
+
+  const updateQuery = `
+    UPDATE ventas
+    SET estado = ?
+    WHERE ID_Venta = ?
+  `;
+
+  db.query(updateQuery, [estado_venta, idVenta], (err, results) => {
+    if (err) {
+      console.error('Error al actualizar la venta:', err);
+      return res.status(500).json({ error: 'Error al actualizar la venta' });
+    }
+
+    if (results.affectedRows === 0) {
+      return res.status(404).json({ error: 'Venta no encontrada' });
+    }
+
+    console.log('Venta actualizada:', results);  // Verifica que la venta se actualizó correctamente
+    res.status(200).json({ mensaje: 'Estado de la venta actualizado' });
+  });
+});
+
+
 
 // Iniciar el servidor
 app.listen(port, () => {
@@ -1137,44 +1269,145 @@ app.put('/api/productos/:idProducto/reducir-stock', (req, res) => {
     }
   );
 });
-// Registrar salida de producto
-app.post('/api/salidas', (req, res) => {
-  let { cantidad, tipoSalida, fechaSalida, total } = req.body;
+// Ruta para actualizar el estado de un usuario (activo/inactivo)
+app.put('/api/usuarios/estado/:id', (req, res) => {
+  const { id } = req.params;
+  const { activo } = req.body; // espera 1 (activo) o 0 (inactivo)
 
-  // Validación de los campos obligatorios
-  if (!cantidad || !tipoSalida || !fechaSalida || !total) {
+  const query = 'UPDATE usuarios SET activo = ? WHERE ID_Usuario = ?';
+
+  db.query(query, [activo, id], (err, result) => {
+    if (err) {
+      console.error('Error al actualizar el estado del usuario:', err);
+      return res.status(500).send('Error al actualizar el estado');
+    }
+    if (result.affectedRows > 0) {
+      res.status(200).send('Estado del usuario actualizado correctamente');
+    } else {
+      res.status(404).send('Usuario no encontrado');
+    }
+  });
+});
+
+app.post('/api/salidas', (req, res) => {
+  let { idProducto, cantidad, tipoSalida, fechaSalida, precioUnitario, total } = req.body;
+
+  if (!idProducto || !cantidad || !tipoSalida || !fechaSalida || !precioUnitario || !total) {
     return res.status(400).json({ message: 'Todos los campos son obligatorios' });
   }
 
-  console.log('Tipo de salida recibido:', tipoSalida);
-
-  // Validación del tipo de salida
-  if (typeof tipoSalida === 'string') {
-    tipoSalida = tipoSalida.trim();
-  } else {
-    return res.status(400).json({ message: 'El tipo de salida es inválido o no está definido' });
-  }
-
+  tipoSalida = tipoSalida.trim();
   const tiposValidos = ['devolucion', 'vencimiento', 'mal estado', 'venta'];
+
   if (!tiposValidos.includes(tipoSalida)) {
-    console.log(`Error: El tipo de salida es inválido. Recibido: ${tipoSalida}`);
-    return res.status(400).json({ message: 'El tipo de salida debe ser "devolucion", "vencimiento", "mal estado" o "venta"' });
+    return res.status(400).json({ message: 'Tipo de salida inválido.' });
   }
 
-  // No se consulta el stock ya que no estamos trabajando con un producto específico
-  db.query(
-    'INSERT INTO salidas (Cantidad, TipoSalida, FechaSalida, Total) VALUES (?, ?, ?, ?)',
-    [cantidad, tipoSalida, fechaSalida, total],
-    (err) => {
-      if (err) {
-        console.error('Error al registrar la salida:', err);
-        return res.status(500).json({ message: 'Error al registrar la salida' });
-      }
-      res.status(201).json({ message: 'Salida registrada correctamente' });
+  // 1. Insertar en salidas
+  const insertQuery = `
+    INSERT INTO salidas (ID_Producto, Cantidad, TipoSalida, FechaSalida, PrecioUnitario, Total)
+    VALUES (?, ?, ?, ?, ?, ?)
+  `;
+
+  db.query(insertQuery, [idProducto, cantidad, tipoSalida, fechaSalida, precioUnitario, total], (err) => {
+    if (err) {
+      console.error('Error al registrar la salida:', err);
+      return res.status(500).json({ message: 'Error al registrar la salida' });
     }
-  );
+
+    // 2. Reducir stock del producto
+    const updateStockQuery = `
+      UPDATE productos SET Stock = Stock - ? WHERE ID_Producto = ?
+    `;
+
+    db.query(updateStockQuery, [cantidad, idProducto], (errorUpdate) => {
+      if (errorUpdate) {
+        console.error('Error al actualizar el stock:', errorUpdate);
+        return res.status(500).json({ message: 'Salida registrada, pero error al actualizar el stock.' });
+      }
+
+      res.status(201).json({ message: 'Salida registrada y stock actualizado correctamente.' });
+    });
+  });
 });
 
+app.post('/api/entradas', (req, res) => {
+  let { cantidad, motivo, fechaEntrada, total, precioUnitario, idProducto } = req.body;
+
+  if (!cantidad || !motivo || !fechaEntrada || !total || !precioUnitario || !idProducto) {
+    return res.status(400).json({ message: 'Todos los campos son obligatorios' });
+  }
+
+  cantidad = parseInt(cantidad);
+  idProducto = parseInt(idProducto);
+
+  if (typeof motivo === 'string') {
+    motivo = motivo.trim().toLowerCase();
+  } else {
+    return res.status(400).json({ message: 'El motivo es inválido' });
+  }
+
+  const motivosValidos = [
+    'compra',
+    'devolucion_cliente',
+    'ajuste_positivo',
+    'recuperacion',
+
+  ];
+
+  if (!motivosValidos.includes(motivo)) {
+    return res.status(400).json({ message: 'Motivo de entrada no válido' });
+  }
+
+  // Primero registrar la entrada
+  const insertEntrada = `
+    INSERT INTO entradas 
+    (ID_Producto, Cantidad, PrecioUnitario, Total, Motivo, FechaEntrada) 
+    VALUES (?, ?, ?, ?, ?, ?)
+  `;
+
+  db.query(insertEntrada, [idProducto, cantidad, precioUnitario, total, motivo, fechaEntrada], (err) => {
+    if (err) {
+      console.error('Error al registrar la entrada:', err);
+      return res.status(500).json({ message: 'Error al registrar la entrada' });
+    }
+
+    // Luego actualizar el stock del producto
+    const updateStock = `
+      UPDATE productos
+      SET Stock = Stock + ?
+      WHERE ID_Producto = ?
+    `;
+
+    db.query(updateStock, [cantidad, idProducto], (err2) => {
+      if (err2) {
+        console.error('Error al actualizar el stock:', err2);
+        return res.status(500).json({ message: 'Entrada registrada pero no se pudo actualizar el stock' });
+      }
+
+      res.status(201).json({ message: 'Entrada registrada y stock actualizado correctamente' });
+    });
+  });
+});
+
+
+app.get('/api/entradas', (req, res) => {
+  const sql = `
+    SELECT e.ID_Entrada, e.Cantidad, e.Motivo, e.FechaEntrada, e.Total, p.Nombre AS NombreProducto
+    FROM entradas e
+    INNER JOIN productos p ON e.ID_Producto = p.ID_Producto
+    ORDER BY e.FechaEntrada DESC
+  `;
+
+  db.query(sql, (err, results) => {
+    if (err) {
+      console.error('Error al obtener las entradas:', err);
+      return res.status(500).json({ message: 'Error al obtener las entradas' });
+    }
+
+    res.json(results);
+  });
+});
 
 app.get('/api/ventas', (req, res) => {
   db.query('SELECT ID_Venta as id, Numero FROM ventas', (err, results) => {
@@ -1229,27 +1462,29 @@ app.get('/api/salidas', (req, res) => {
   
 
   app.get('/api/VERRusuarios', (req, res) => {
-    db.query('SELECT ID_Usuario, Nombre FROM usuarios', (err, results) => {
-      if (err) {
-        console.error('Error al obtener los usuarios:', err);
-        return res.status(500).json({ error: 'Error al obtener los usuarios' });
-      }
-      
-      // Si no hay resultados, devolver un mensaje adecuado
-      if (results.length === 0) {
-        return res.status(404).json({ message: 'No se encontraron usuarios' });
-      }
-      
-      // Si la consulta fue exitosa, retornamos los resultados
-      res.json(results);
-    });
+  const sql = 'SELECT ID_Usuario, Nombre FROM usuarios WHERE activo = 1';
+
+  db.query(sql, (err, results) => {
+    if (err) {
+      console.error('Error al obtener los usuarios:', err);
+      return res.status(500).json({ error: 'Error al obtener los usuarios' });
+    }
+
+    if (results.length === 0) {
+      return res.status(404).json({ message: 'No se encontraron usuarios activos' });
+    }
+
+    res.json(results); // ✅ Solo usuarios activos
   });
-// Endpoint para obtener todos los productos
+});
+
+// Endpoint para obtener todos los productos con precio incluido
 app.get('/api/productos', (req, res) => {
   const query = `
     SELECT 
       ID_Producto, 
-      Nombre 
+      Nombre, 
+      Precio
     FROM productos;
   `;
 
@@ -1258,10 +1493,11 @@ app.get('/api/productos', (req, res) => {
       console.error('Error al obtener los productos:', err);
       return res.status(500).json({ error: 'Error al obtener los productos' });
     }
-    
-    res.json(results);  // Devuelves solo ID y Nombre de los productos
+
+    res.json(results); // ✅ Ahora incluye también el precio
   });
 });
+
 // Endpoint para obtener el detalle del producto
 app.get('/api/producto/:id', (req, res) => {
   const { id } = req.params;  // Aquí capturamos el ID del producto
@@ -1312,6 +1548,7 @@ app.get('/factura/:id', (req, res) => {
       v.ID_Venta,
       v.Numero,
       v.Fecha,
+      v.estado,
       c.Nombre AS Cliente,
       mp.Nombre AS MetodoPago,
       u.Nombre AS Usuario,
@@ -1346,6 +1583,7 @@ app.get('/factura/:id', (req, res) => {
       ID_Venta: results[0].ID_Venta,
       Numero: results[0].Numero,
       Fecha: results[0].Fecha,
+      Estado: results[0].estado, // 👈 Estado 0 o 1
       Cliente: results[0].Cliente,
       MetodoPago: results[0].MetodoPago || 'No especificado',
       Usuario: results[0].Usuario,
@@ -1380,18 +1618,17 @@ app.get('/factura/:id', (req, res) => {
 
 
 
-
 // Endpoint para obtener los productos
-// Endpoint para obtener los métodos de pago
 app.get('/api/VERRmetodos_pago', (req, res) => {
-  db.query('SELECT ID_Metodo_Pago, Nombre FROM metodos_pago', (err, results) => {
+  db.query('SELECT ID_Metodo_Pago, Nombre FROM metodos_pago WHERE activo = 1', (err, results) => {
     if (err) {
       console.error('Error al obtener los métodos de pago:', err);
       return res.status(500).json({ error: 'Error al obtener los métodos de pago' });
     }
-    res.json(results);
+    res.json(results); // ✅ solo métodos activos
   });
 });
+
 
 
 app.post('/api/descuentos', (req, res) => {
@@ -1669,3 +1906,4 @@ app.post('/api/login', (req, res) => {
     }
   });
 });
+
