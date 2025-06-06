@@ -1,0 +1,164 @@
+/* Reset y base */
+body, html {
+  margin: 0;
+  padding: 0;
+  font-family: 'Montserrat', sans-serif;
+  height: 100%;
+  width: 100%;
+}
+
+/* Fondo general */
+.login-wrapper {
+  width: 100vw;
+  height: 100vh;
+  background: linear-gradient(to bottom right, #8446e8, #c967e8);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+  box-sizing: border-box;
+}
+
+/* Contenedor principal equilibrado */
+.login-box {
+  width: 1200px;
+  height: 750px;
+  background: white;
+  border-radius: 40px;
+  display: flex;
+  overflow: hidden;
+  box-shadow: 0 30px 70px rgba(0, 0, 0, 0.3);
+}
+
+/* Panel izquierdo */
+.login-image-section {
+  width: 50%;
+  background-color: #c5b0e8;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 40px;
+  text-align: center;
+}
+
+.login-image-section img {
+  width: 90%;
+  max-width: 500px;
+  margin-bottom: 25px;
+}
+
+.login-image-section h1 {
+  font-size: 48px;
+  margin: 0;
+  color: #1c1c54;
+}
+
+.login-image-section h2 {
+  font-size: 24px;
+  margin-bottom: 15px;
+  color: #1c1c54;
+}
+
+.login-image-section p {
+  font-size: 16px;
+  color: #333;
+  max-width: 90%;
+  line-height: 1.6;
+}
+
+.switch-btn {
+  margin-top: 20px;
+  background-color: transparent;
+  border: 2px solid #7c4dff;
+  color: #7c4dff;
+  padding: 12px 24px;
+  border-radius: 30px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: all 0.3s ease-in-out;
+}
+
+.switch-btn:hover {
+  background-color: #7c4dff;
+  color: white;
+}
+
+/* Panel derecho */
+.login-form-section {
+  width: 50%;
+  padding: 50px 40px;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.login-form-section .tag {
+  position: absolute;
+  top: 25px;
+  right: 25px;
+  background-color: #b388ff;
+  padding: 10px 22px;
+  border-radius: 30px;
+  color: white;
+  font-size: 15px;
+}
+
+.login-form-section form {
+  display: flex;
+  flex-direction: column;
+}
+
+.login-form-section h3 {
+  color: #5e35b1;
+  margin-bottom: 30px;
+  font-size: 26px;
+  text-align: center;
+}
+
+.login-form-section input,
+.login-form-section select {
+  padding: 16px;
+  border: none;
+  border-bottom: 2px solid #b388ff;
+  outline: none;
+  margin-bottom: 20px;
+  font-size: 16px;
+  border-radius: 10px;
+  background-color: #f4f4f4;
+}
+
+.login-form-section button {
+  background: linear-gradient(to right, #b388ff, #7c4dff);
+  color: white;
+  padding: 16px;
+  border: none;
+  border-radius: 35px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: all 0.3s ease-in-out;
+}
+
+.login-form-section button:hover {
+  transform: scale(1.04);
+}
+
+.form-links {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 25px;
+  font-size: 15px;
+}
+
+.form-links a {
+  color: #7c4dff;
+  text-decoration: none;
+  border-bottom: 1px solid transparent;
+  width: fit-content;
+}
+
+.form-links a:hover {
+  border-bottom: 1px solid #7c4dff;
+}

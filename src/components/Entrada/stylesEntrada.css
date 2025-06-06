@@ -1,0 +1,263 @@
+/* === Fondo oscuro semitransparente === */
+.entrada-modal {
+  position: fixed;
+  z-index: 999;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.4);
+  display: flex !important;
+  align-items: center;
+  justify-content: center;
+}
+
+/* === Contenido del modal === */
+.entrada-modal-content {
+  background-color: #f2e9f6;
+  padding: 40px;
+  border-radius: 14px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+  width: 520px;
+  max-width: 95%;
+  animation: fadeIn 0.3s ease;
+  position: relative;
+  font-size: 16px;
+}
+
+/* === Encabezado === */
+.entrada-modal-header {
+  display: flex;
+  justify-content: space-between;
+  text-align: center;
+  margin-bottom: 25px;
+}
+
+.entrada-modal-header h2 {
+  font-size: 24px;
+  text-align: center;
+  margin: 0;
+  color: #2c3e50;
+  font-weight: 800;
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.entrada-close {
+  position: absolute;
+  top: 12px;
+  right: 10px;
+  font-size: 35px;
+  cursor: pointer;
+  color: #555;
+}
+
+/* === Grupos de formulario === */
+.entrada-form-group {
+  margin-bottom: 24px;
+}
+
+.entrada-form-group label {
+  display: block;
+  margin-bottom: 10px;
+  font-weight: 600;
+  color: #333;
+  font-size: 15px;
+}
+
+.entrada-form-group input,
+.entrada-form-group select {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  font-size: 15px;
+  background-color: #f9f9f9;
+}
+
+/* === Botones === */
+.entrada-form-buttons {
+  display: flex;
+  justify-content: flex-end;
+  gap: 14px;
+  margin-top: 15px;
+}
+
+.entrada-form-buttons button {
+  padding: 12px 28px;
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 15px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.entrada-form-buttons button[type="submit"] {
+  background-color: #9333ea;
+  color: white;
+}
+
+.entrada-form-buttons button[type="button"] {
+  background-color: #e5e7eb;
+  color: #111;
+}
+
+.entrada-form-buttons button:hover {
+  opacity: 0.92;
+}
+
+/* === Error/Mensaje === */
+.entrada-error {
+  color: red;
+  font-size: 14px;
+  margin-bottom: 12px;
+}
+
+/* === Animación === */
+@keyframes fadeIn {
+  from {
+    transform: scale(0.95);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+/* Contenedor principal */
+.entrada-main-content {
+  width: 90%;
+  max-width: 1200px !important;
+  margin: 40px auto;
+  padding: 30px 50px;
+  background-color: #f2e9f6 !important;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  transform: translateX(250px);
+}
+
+/* Título */
+.entrada-titulo {
+  font-size: 28px;
+  font-weight: bold;
+  color: #5e35b1;
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+/* Buscador y botón */
+.entrada-acciones-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+}
+
+.entrada-buscador-input {
+  padding: 10px 14px;
+  width: 700px !important;
+  border-radius: 8px;
+  border: 1px solid #aea4ed !important;
+  background-color: #ffffff;
+  font-size: 14px;
+  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.05);
+}
+
+.entrada-btn-agregar {
+  padding: 10px 20px;
+  background-color: #7e57c2;
+  color: white;
+  border: none;
+  border-radius: 10px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.entrada-btn-agregar:hover {
+  background-color: #673ab7;
+}
+
+/* Tabla */
+.entrada-tabla-container {
+  overflow-x: auto;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 0 15px rgba(0,0,0,0.1);
+  padding: 20px;
+}
+
+.entrada-tabla {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 700px;
+}
+
+.entrada-tabla thead {
+  background-color: #ede7f6;
+}
+
+.entrada-tabla th, .entrada-tabla td {
+  padding: 12px;
+  text-align: left;
+  border-bottom: 1px solid #ddd;
+}
+
+.entrada-tabla th {
+  font-weight: bold;
+  color: #4527a0;
+}
+
+.entrada-tabla tr:hover {
+  background-color: #f3e5f5;
+}
+
+/* Modal */
+.entrada-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0,0,0,0.6);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.entrada-modal-content {
+  background: white;
+  padding: 30px;
+  border-radius: 15px;
+  width: 90%;
+  max-width: 600px;
+  box-shadow: 0 0 15px rgba(0,0,0,0.2);
+  position: relative;
+}
+
+.entrada-modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.entrada-modal-header h2 {
+  color: #5e35b1;
+  margin: 0;
+}
+
+.entrada-close {
+  font-size: 28px;
+  font-weight: bold;
+  color: #999;
+  cursor: pointer;
+}
+
+.entrada-close:hover {
+  color: #000;
+}

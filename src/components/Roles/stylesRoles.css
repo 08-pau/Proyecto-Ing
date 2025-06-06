@@ -1,0 +1,264 @@
+body {
+  font-family: 'Poppins', sans-serif;
+}
+
+/* Contenedor principal */
+.roles-main-content {
+  width: 90%;
+  max-width: 1200px !important;
+  margin: 40px auto;
+  padding: 30px 50px;
+  background-color: #f2e9f6 !important;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  transform: translateX(250px);
+}
+
+.roles-buscador-input {
+  padding: 10px 14px;
+  width: 700px !important;
+  border-radius: 8px;
+  border: 1px solid #aea4ed !important;
+  background-color: #ffffff;
+  font-size: 14px;
+  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.05);
+}
+
+/* Título */
+.roles-titulo-pago {
+   font-size: 35px;
+  color: #2c3e50;
+  margin-top: 15px;   /* 👈 Bájalo desde arriba */
+  margin-bottom: 20px;
+  font-weight: 900;
+  text-align: center;
+}
+
+/* Botón Agregar */
+.roles-acciones-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 50px;     /* 👈 Espacio entre el título y el buscador */
+  margin-bottom: 20px;
+  gap: 20px;
+}
+
+.roles-btn-agregar {
+  background-color: #2c3e50 !important;
+  color: white;
+  font-weight: 600 !important;
+  border: none;
+  padding: 10px 90px !important;
+  border-radius: 8px;
+  cursor: pointer;
+  box-shadow: 0 4px 10px rgba(59, 130, 246, 0.4);
+  transition: background-color 0.3s ease;
+}
+
+/* Tabla */
+.roles-tabla-metodos {
+  margin-top: 50px;
+  overflow-x: auto; /* ✅ Habilita scroll si se desborda */
+  width: 100%;
+  box-sizing: border-box;
+}
+.roles-tabla {
+  min-width: 100%;
+  table-layout: auto;
+}
+.roles-tabla-metodos thead tr {
+  background-color: #2c3e50 !important;
+}
+
+.roles-tabla-metodos th,
+.roles-tabla-metodos td {
+  padding: 16px 20px;
+  text-align: center;
+  font-size: 14px;
+}
+
+.roles-tabla-metodos th {
+  color: white;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
+/* Estado */
+.roles-estado-activo {
+  background-color: #2c3e50;
+  color: white;
+  padding: 6px 14px;
+  border-radius: 30px;
+  font-weight: 700;
+  font-family: 'Poppins', sans-serif;
+  cursor: pointer;
+  text-transform: uppercase;
+  border: none;
+}
+
+.roles-estado-inactivo {
+  background-color: #9333ea;
+  color: white;
+  padding: 6px 14px;
+  border-radius: 30px;
+  font-weight: 700;
+  font-family: 'Poppins', sans-serif;
+  cursor: pointer;
+  text-transform: uppercase;
+  border: none;
+}
+
+/* Botón editar */
+.roles-btn-editar {
+  background-color: #9333ea;
+  color: white;
+  padding: 8px 16px;
+  font-weight: 700;
+  font-family: 'Poppins', sans-serif;
+  border-radius: 8px;
+  text-transform: uppercase;
+  cursor: pointer;
+  border: none;
+  box-shadow: 0 2px 6px rgba(147, 51, 234, 0.2);
+  transition: background-color 0.3s ease;
+}
+
+.roles-btn-editar:hover {
+  background-color: #7e22ce;
+}
+
+/* Mensaje */
+.roles-mensaje {
+  margin-bottom: 15px;
+  color: #10b981;
+  font-weight: 500;
+  font-size: 15px;
+}
+/* Fondo oscuro semitransparente */
+.roles-modal {
+  position: fixed;
+  z-index: 999;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+  background-color: rgba(0, 0, 0, 0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Caja blanca del modal */
+.roles-modal-content {
+ background-color: #f2e9f6 !important;
+  padding: 40px; /* un poco más de espacio interno */
+  border-radius: 14px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+  width: 520px; /* más ancha */
+  max-width: 95%;
+  animation: fadeIn 0.3s ease;
+  position: relative;
+  font-size: 16px; /* fuente general más grande */
+}
+
+/* Encabezado del modal */
+.roles-modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 25px;
+}
+
+.roles-modal-header h2 {
+  font-size: 24px;
+  margin: 0;
+  color: #2c3e50;
+  font-weight: 800;
+}
+
+.roles-close {
+  font-size: 28px;
+  cursor: pointer;
+  color: #555;
+}
+
+/* Campo */
+.roles-form-group {
+  margin-bottom: 24px;
+}
+
+.roles-form-group label {
+  display: block;
+  margin-bottom: 10px;
+  font-weight: 600;
+  color: #333;
+  font-size: 15px;
+}
+
+.roles-form-group input {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  font-size: 15px;
+  background-color: #f9f9f9;
+}
+
+/* Botones */
+.roles-form-buttons {
+  display: flex;
+  justify-content: flex-end;
+  gap: 14px;
+  margin-top: 15px;
+}
+
+.roles-form-buttons button {
+  padding: 12px 28px;
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 15px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.roles-form-buttons button[type="submit"] {
+  background-color: #9333ea;
+  color: white;
+}
+
+.roles-form-buttons button[type="button"] {
+  background-color: #e5e7eb;
+  color: #111;
+}
+
+.roles-form-buttons button:hover {
+  opacity: 0.92;
+}
+
+/* Error */
+.roles-error {
+  color: red;
+  font-size: 14px;
+  margin-bottom: 12px;
+}
+
+/* Animación */
+@keyframes fadeIn {
+  from {
+    transform: scale(0.95);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+.roles-tabla-metodos tbody tr {
+  background-color: white;
+}
+.roles-tabla-metodos td {
+  border-bottom: 1px solid #ddd;
+}

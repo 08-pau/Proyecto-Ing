@@ -1,0 +1,282 @@
+/* ========== GLOBAL ========== */
+body,
+html {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  overflow-y: auto;
+  font-family: 'Poppins', sans-serif;
+}
+
+/* ========== CONTENEDOR PRINCIPAL ========== */
+.usuario-main-content {
+  width: 90%;
+  max-width: 1350px;
+  margin: 40px auto;
+  padding: 30px 50px;
+  background-color: #f2e9f6;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  transform: translateX(250px);
+}
+
+.usuario-titulo {
+  font-size: 35px;
+  color: #2c3e50;
+  margin: 15px 0 20px;
+  font-weight: 900;
+  text-align: center;
+}
+
+/* ========== BUSCADOR Y BOTÓN AGREGAR ========== */
+.usuario-acciones-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin: 50px 0 20px;
+  gap: 20px;
+}
+
+.usuario-buscador-input {
+  padding: 10px 14px;
+  width: 700px;
+  border-radius: 8px;
+  border: 1px solid #aea4ed;
+  background-color: #ffffff;
+  font-size: 14px;
+  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.05);
+}
+
+.usuario-btn-agregar {
+  background-color: #2c3e50;
+  color: white;
+  font-weight: 600;
+  border: none;
+  padding: 10px 110px;
+  border-radius: 8px;
+  cursor: pointer;
+  box-shadow: 0 4px 10px rgba(59, 130, 246, 0.4);
+  transition: background-color 0.3s ease;
+}
+
+/* ========== TABLA DE USUARIOS ========== */
+.usuario-tabla-container {
+  margin-top: 50px;
+  overflow-x: auto;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.usuario-tabla,
+.usuario-tabla-metodos {
+  width: 100%;
+  border-collapse: collapse;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+  table-layout: auto;
+}
+
+.usuario-tabla-metodos thead {
+  background-color: #2c3e50;
+  color: white;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.usuario-tabla-metodos th,
+.usuario-tabla-metodos td {
+  padding: 14px;
+  text-align: center;
+  font-size: 14px;
+}
+
+.usuario-tabla-metodos tbody tr {
+  background-color: white;
+}
+
+.usuario-tabla-metodos tbody tr:nth-child(even) {
+  background-color: #fafafa;
+}
+
+.usuario-tabla-metodos td {
+  border-bottom: 1px solid #e0e0e0;
+}
+
+/* ========== BOTONES DE ESTADO Y ACCIONES ========== */
+.usuario-estado-activo,
+.usuario-estado-inactivo {
+  color: white;
+  padding: 6px 14px;
+  border-radius: 30px;
+  font-weight: 700;
+  font-family: 'Poppins', sans-serif;
+  border: none;
+  cursor: pointer;
+  text-transform: uppercase;
+}
+
+.usuario-estado-activo {
+  background-color: #2c3e50;
+}
+
+.usuario-estado-inactivo {
+  background-color: #9333ea;
+}
+
+.usuario-btn-editar {
+  background-color: #9333ea;
+  color: white;
+  padding: 8px 16px;
+  border-radius: 8px;
+  font-weight: 700;
+  font-family: 'Poppins', sans-serif;
+  border: none;
+  cursor: pointer;
+  text-transform: uppercase;
+}
+
+.usuario-btn-editar:hover {
+  background-color: #7e22ce;
+}
+
+.usuario-mensaje {
+  margin-bottom: 15px;
+  color: #10b981;
+  font-weight: 500;
+  font-size: 15px;
+}
+
+/* ========== MODAL GENERAL ========== */
+.usuario-modal {
+  position: fixed;
+  z-index: 999;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  padding: 40px 20px;
+  background-color: rgba(0, 0, 0, 0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+}
+
+/* ========== CONTENIDO DEL MODAL ========== */
+.usuario-modal-content {
+  background-color: #f2e9f6;
+  padding: 40px;
+  border-radius: 14px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+  width: 520px;
+  max-width: 95%;
+  animation: fadeIn 0.3s ease;
+  position: relative;
+  font-size: 16px;
+  display: flex;
+  flex-direction: column;
+  max-height: 90vh;
+  overflow-y: auto;
+}
+
+/* ========== HEADER DEL MODAL ========== */
+.usuario-modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 25px;
+}
+
+.usuario-modal-header h2 {
+  font-size: 24px;
+  margin: 0;
+  color: #2c3e50;
+  font-weight: 800;
+}
+
+.usuario-close {
+  font-size: 28px;
+  cursor: pointer;
+  color: #555;
+}
+
+.usuario-close:hover {
+  color: #9333ea;
+  transform: scale(1.1);
+  transition: color 0.2s, transform 0.2s;
+}
+
+/* ========== FORMULARIO DEL MODAL ========== */
+.usuario-form-group {
+  margin-bottom: 24px;
+}
+
+.usuario-form-group label {
+  display: block;
+  margin-bottom: 10px;
+  font-weight: 600;
+  color: #333;
+  font-size: 15px;
+}
+
+.usuario-form-group input,
+.usuario-form-group select {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  font-size: 15px;
+  background-color: #f9f9f9;
+}
+
+/* ========== BOTONES DEL FORMULARIO ========== */
+.usuario-form-buttons {
+  display: flex;
+  justify-content: flex-end;
+  gap: 14px;
+  margin-top: 15px;
+}
+
+.usuario-form-buttons button {
+  padding: 12px 28px;
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 15px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+  font-family: 'Poppins', sans-serif;
+}
+
+.usuario-form-buttons button[type="submit"] {
+  background-color: #9333ea;
+  color: white;
+}
+
+.usuario-form-buttons button[type="button"] {
+  background-color: #e5e7eb;
+  color: #111;
+}
+
+.usuario-form-buttons button:hover {
+  opacity: 0.92;
+}
+
+/* ========== ERRORES Y ANIMACIONES ========== */
+.usuario-error {
+  color: red;
+  font-size: 14px;
+  margin-bottom: 12px;
+}
+
+@keyframes fadeIn {
+  from {
+    transform: scale(0.95);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
